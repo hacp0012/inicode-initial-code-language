@@ -51,8 +51,8 @@ affiche("Le nombre maximum est : " + max)`;
   // Download windows | mac | linux release
   const downloadRelease = () => {
     // Remplacez par l'URL de votre fichier .exe
-    const url = "/packages-releases/IniCode-1.0.0.exe";
-    const filename = "IniCode-1.0.0.exe";
+    const url = "../hbuilds/packages-releases/IniCode.exe";
+    const filename = "IniCode.exe";
     // 1. Créer un élément de lien () invisible
     const link = document.createElement("a");
     // 2. Lui attribuer l'URL du fichier à télécharger

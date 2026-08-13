@@ -2,6 +2,14 @@
 
 IDE d’apprentissage de l’algorithmique et de la programmation, pensée pour apprendre en français avec une syntaxe proche du pseudo-code.
 
+## Version en ligne
+
+https://inicode.freedev-academy.com
+
+**directement vers l'IDE**
+
+https://inicode.freedev-academy.com/#/ide
+
 ## Aperçu
 
 IniCode est un environnement de développement éducatif qui permet de :

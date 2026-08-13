@@ -133,7 +133,7 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
 
         {/* Sidebar Chapter Navigation */}
         <aside
-          className={`fixed lg:sticky top-[57px] left-0 z-30 h-[calc(100vh-57px)] w-72 bg-white dark:bg-[#181822] border-r border-slate-200 dark:border-zinc-800 flex flex-col transition-transform duration-200 lg:translate-x-0 ${
+          className={`fixed lg:sticky top-14.25 left-0 z-30 h-[calc(100vh-57px)] w-72 bg-white dark:bg-[#181822] border-r border-slate-200 dark:border-zinc-800 flex flex-col transition-transform duration-200 lg:translate-x-0 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
