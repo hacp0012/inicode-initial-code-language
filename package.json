@@ -1,7 +1,7 @@
 {
   "name": "inicode",
   "description": "IniCode - IDE d’apprentissage de l’algorithmique et de la programmation",
-  "author": "IniCode",
+  "author": "hacp0012",
   "private": true,
   "version": "1.0.0",
   "type": "module",

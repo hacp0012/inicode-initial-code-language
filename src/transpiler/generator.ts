@@ -187,11 +187,15 @@ export class CodeGenerator {
       }
 
       case 'FunctionDecl': {
+        const formattedParams = node.params.map((p) => {
+          const pType = node.paramTypes?.[p] ? mapFrenchTypeToTS(node.paramTypes[p]) : 'any';
+          const defaultValue = node.paramDefaultValues?.[p];
+          const typePart = this.targetLanguage === 'ts' ? `: ${pType}` : '';
+          const defaultPart = defaultValue ? ` = ${this.generateExpression(defaultValue)}` : '';
+          return `${p}${typePart}${defaultPart}`;
+        });
+
         if (this.targetLanguage === 'ts') {
-          const formattedParams = node.params.map((p) => {
-            const pType = node.paramTypes?.[p] ? mapFrenchTypeToTS(node.paramTypes[p]) : 'any';
-            return `${p}: ${pType}`;
-          });
           const retTypeRaw = node.returnType ? mapFrenchTypeToTS(node.returnType) : 'any';
           const retType = retTypeRaw.startsWith('Promise') ? retTypeRaw : `Promise<${retTypeRaw}>`;
           let code = `${this.indent()}async function ${node.name}(${formattedParams.join(', ')}): ${retType} {\n`;
@@ -201,7 +205,7 @@ export class CodeGenerator {
           code += `\n${this.indent()}}`;
           return code;
         } else {
-          let code = `${this.indent()}async function ${node.name}(${node.params.join(', ')}) {\n`;
+          let code = `${this.indent()}async function ${node.name}(${formattedParams.join(', ')}) {\n`;
           this.indentLevel++;
           code += node.body.map((s) => this.generateNode(s)).join('\n');
           this.indentLevel--;
@@ -220,7 +224,14 @@ export class CodeGenerator {
         }
 
         if (node.constructor) {
-          code += `${classIndent}  constructor(${node.constructor.params.join(', ')}) {\n`;
+          const constructorParams = node.constructor.params.map((p) => {
+            const pType = node.constructor?.paramTypes?.[p] ? mapFrenchTypeToTS(node.constructor.paramTypes[p]) : 'any';
+            const defaultValue = node.constructor?.paramDefaultValues?.[p];
+            const typePart = this.targetLanguage === 'ts' ? `: ${pType}` : '';
+            const defaultPart = defaultValue ? ` = ${this.generateExpression(defaultValue)}` : '';
+            return `${p}${typePart}${defaultPart}`;
+          });
+          code += `${classIndent}  constructor(${constructorParams.join(', ')}) {\n`;
           this.indentLevel++;
           code += node.constructor.body.map((s) => this.generateNode(s)).join('\n');
           this.indentLevel--;
@@ -230,7 +241,10 @@ export class CodeGenerator {
         for (const method of node.methods) {
           const methodParams = method.params.map((p) => {
             const pType = method.paramTypes?.[p] ? mapFrenchTypeToTS(method.paramTypes[p]) : 'any';
-            return this.targetLanguage === 'ts' ? `${p}: ${pType}` : p;
+            const defaultValue = method.paramDefaultValues?.[p];
+            const typePart = this.targetLanguage === 'ts' ? `: ${pType}` : '';
+            const defaultPart = defaultValue ? ` = ${this.generateExpression(defaultValue)}` : '';
+            return `${p}${typePart}${defaultPart}`;
           });
           const methodRet = method.returnType ? mapFrenchTypeToTS(method.returnType) : 'any';
           const methodSignature = this.targetLanguage === 'ts'
@@ -251,7 +265,10 @@ export class CodeGenerator {
       case 'ProcedureDecl': {
         const formattedParams = node.params.map((p) => {
           const pType = node.paramTypes?.[p] ? mapFrenchTypeToTS(node.paramTypes[p]) : 'any';
-          return this.targetLanguage === 'ts' ? `${p}: ${pType}` : p;
+          const defaultValue = node.paramDefaultValues?.[p];
+          const typePart = this.targetLanguage === 'ts' ? `: ${pType}` : '';
+          const defaultPart = defaultValue ? ` = ${this.generateExpression(defaultValue)}` : '';
+          return `${p}${typePart}${defaultPart}`;
         });
         let code = `${this.indent()}async function ${node.name}(${formattedParams.join(', ')}) {\n`;
         this.indentLevel++;

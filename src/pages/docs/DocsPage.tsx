@@ -84,7 +84,7 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
               <Code2 className="w-5 h-5" />
             </div> */}
             <div className="bg-orange-600 text-white rounded-xl shadow-md shadow-orange-600/30 group-hover:scale-105 transition">
-              <img src="/pwa-192x192.svg" alt="IniCode Logo" className="w-7 h-7" />
+              <img src="pwa-192x192.svg" alt="IniCode Logo" className="w-7 h-7" />
             </div>
             <span>IniCode</span>
             <span className="text-xs px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 font-medium rounded-full border border-orange-500/20">

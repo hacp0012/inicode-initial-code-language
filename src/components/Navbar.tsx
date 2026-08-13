@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand Logo & Name */}
         <div className="flex min-w-0 items-center gap-3" style={{ WebkitAppRegion: showWindowControls ? "drag" : "no-drag" }}>
           <div className="text-white rounded-xl shadow-sm flex items-center justify-center font-extrabold tracking-tight">
-            <img src="/pwa-192x192.svg" alt="IniCode Logo" className="w-8 h-8" />
+            <img src="pwa-192x192.svg" alt="IniCode Logo" className="w-8 h-8" />
           </div>
           <div>
             <div className="flex items-center gap-2">

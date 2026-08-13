@@ -196,6 +196,7 @@ export interface FunctionDeclNode {
   name: string;
   params: string[];
   paramTypes?: Record<string, string>;
+  paramDefaultValues?: Record<string, ExpressionNode>;
   returnType?: string;
   body: ASTNode[];
   line: number;
@@ -212,6 +213,7 @@ export interface ClassConstructorNode {
   type: 'ClassConstructor';
   params: string[];
   paramTypes?: Record<string, string>;
+  paramDefaultValues?: Record<string, ExpressionNode>;
   body: ASTNode[];
   line: number;
 }
@@ -221,6 +223,7 @@ export interface ClassMethodNode {
   name: string;
   params: string[];
   paramTypes?: Record<string, string>;
+  paramDefaultValues?: Record<string, ExpressionNode>;
   returnType?: string;
   body: ASTNode[];
   line: number;
@@ -240,6 +243,7 @@ export interface ProcedureDeclNode {
   name: string;
   params: string[];
   paramTypes?: Record<string, string>;
+  paramDefaultValues?: Record<string, ExpressionNode>;
   body: ASTNode[];
   line: number;
 }

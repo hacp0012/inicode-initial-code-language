@@ -8,6 +8,7 @@ import { ConsoleTerminal } from "../../components/ConsoleTerminal";
 import { VisualDebugger } from "../../components/VisualDebugger";
 import { LexerAnalyzerModal } from "../../components/LexerAnalyzerModal";
 import { CheatSheetModal } from "../../components/CheatSheetModal";
+import { AppInfoModal } from "../../components/AppInfoModal";
 import { ExportConfirmModal } from "../../components/ExportConfirmModal";
 import { MobileGuardModal } from "../../components/MobileGuardModal";
 import { StatusBar } from "../../components/StatusBar";
@@ -259,6 +260,7 @@ export const IdePage: React.FC<IdePageProps> = ({ theme, setTheme, resolvedTheme
   // Modals & Export confirmation
   const [isLexerModalOpen, setIsLexerModalOpen] = useState(false);
   const [isCheatSheetModalOpen, setIsCheatSheetModalOpen] = useState(false);
+  const [isAppInfoModalOpen, setIsAppInfoModalOpen] = useState(false);
   const [fileToExportModal, setFileToExportModal] = useState<CodeFile | null>(null);
 
   // Reference to CodeExecutor
@@ -585,6 +587,7 @@ export const IdePage: React.FC<IdePageProps> = ({ theme, setTheme, resolvedTheme
             onSelectExample={handleSelectExample}
             onOpenLexer={() => setIsLexerModalOpen(true)}
             onOpenCheatSheet={handleOpenDocumentationInNewTab}
+            onOpenAppInfo={() => setIsAppInfoModalOpen(true)}
             theme={theme}
             resolvedTheme={resolvedTheme}
             onCycleTheme={cycleTheme}
@@ -788,6 +791,7 @@ export const IdePage: React.FC<IdePageProps> = ({ theme, setTheme, resolvedTheme
         />
 
         <CheatSheetModal isOpen={isCheatSheetModalOpen} onClose={() => setIsCheatSheetModalOpen(false)} />
+        <AppInfoModal isOpen={isAppInfoModalOpen} onClose={() => setIsAppInfoModalOpen(false)} />
       </div>
     </>
   );

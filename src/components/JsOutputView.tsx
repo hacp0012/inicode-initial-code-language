@@ -100,7 +100,7 @@ export const JsOutputView: React.FC<JsOutputViewProps> = ({ jsCode, tsCode = "",
       </div>
 
       {/* Code Display with Monaco Editor */}
-      <div className="flex-1 overflow-hidden relative min-h-[200px]">
+      <div className="flex-1 overflow-hidden relative min-h-50">
         <Editor
           height="100%"
           language={lang === "ts" ? "typescript" : "javascript"}

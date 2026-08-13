@@ -17,6 +17,7 @@ import {
   Smartphone,
   Check,
   Copy,
+  Download,
 } from "lucide-react";
 import { CodeHighlighter } from "../components/CodeHighlighter";
 
@@ -47,6 +48,25 @@ affiche("Le nombre maximum est : " + max)`;
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
+  // Download windows | mac | linux release
+  const downloadRelease = () => {
+    // Remplacez par l'URL de votre fichier .exe
+    const url = "/packages-releases/IniCode-1.0.0.exe";
+    const filename = "IniCode-1.0.0.exe";
+    // 1. Créer un élément de lien () invisible
+    const link = document.createElement("a");
+    // 2. Lui attribuer l'URL du fichier à télécharger
+    link.href = url;
+    // 3. Forcer le navigateur à télécharger le fichier au lieu de tenter de l'ouvrir
+    link.setAttribute("download", filename);
+    // 4. Ajouter temporairement le lien au document HTML
+    document.body.appendChild(link);
+    // 5. Simuler un clic de la part de l'utilisateur
+    link.click();
+    // 6. Nettoyer et supprimer le lien du HTML
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0f0f14] text-slate-900 dark:text-zinc-100 flex flex-col font-sans selection:bg-orange-500 selection:text-white transition-colors duration-200">
       {/* Top Navbar */}
@@ -54,7 +74,7 @@ affiche("Le nombre maximum est : " + max)`;
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2.5 font-black text-xl text-slate-900 dark:text-white tracking-tight">
             <div className="text-white rounded-xl shadow-lg shadow-orange-600/30">
-              <img src="/logo.png" alt="IniCode Logo" className="w-7 h-7" />
+              <img src="logo.png" alt="IniCode Logo" className="w-7 h-7" />
             </div>
             <span>IniCode</span>
           </Link>
@@ -125,11 +145,11 @@ affiche("Le nombre maximum est : " + max)`;
           </button>
 
           <button
-            onClick={() => navigate("/docs")}
+            onClick={() => downloadRelease()}
             className="w-full sm:w-auto px-8 py-3.5 bg-slate-100 dark:bg-[#1f1f2a] hover:bg-slate-200 dark:hover:bg-[#282836] text-slate-800 dark:text-zinc-200 font-semibold text-base rounded-2xl border border-slate-200 dark:border-zinc-800 transition flex items-center justify-center gap-2 cursor-pointer"
           >
-            <BookOpen className="w-5 h-5 text-orange-500" />
-            <span>Explorer la Documentation</span>
+            <Download className="w-5 h-5 text-orange-500" />
+            <span>Telecharger (windows)</span>
           </button>
         </div>
 

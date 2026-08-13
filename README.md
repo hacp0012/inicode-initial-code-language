@@ -1,20 +1,72 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# IniCode
 
-# Run and deploy your AI Studio app
+IDE d’apprentissage de l’algorithmique et de la programmation, pensée pour apprendre en français avec une syntaxe proche du pseudo-code.
 
-This contains everything you need to run your app locally.
+## Aperçu
 
-View your app in AI Studio: https://ai.studio/apps/63d74c10-16bf-4163-ad38-95ae83741fa3
+IniCode est un environnement de développement éducatif qui permet de :
 
-## Run Locally
+- écrire des algorithmes en français
+- visualiser immédiatement la sortie exécutable
+- comprendre la transpilation vers JavaScript/TypeScript
+- explorer les structures de contrôle, les fonctions, les tableaux et les classes
+- apprendre avec une interface de type IDE moderne et pédagogique
 
-**Prerequisites:**  Node.js
+## Capture d’écran
 
+![Capture d’écran de IniCode](./screenshot.png)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Fonctionnalités
+
+- Éditeur de code avec coloration syntaxique et complétion
+- Exécution interactive des programmes
+- Console de sortie avec résultats et messages système
+- Support de la syntaxe française : `soit`, `afficher`, `si`, `sinon`, `pour`, `tant que`, etc.
+- Documentation intégrée et exemples pratiques
+- Transpileur personnalisé vers JavaScript/TypeScript
+- Support des classes et des objets pour un apprentissage plus complet
+
+## Prérequis
+
+- Node.js 18+
+- npm
+
+## Démarrage rapide
+
+1. Installer les dépendances :
+
+   ```bash
+   npm install
+   ```
+
+2. Lancer l’application en mode développement :
+
+   ```bash
+   npm run dev
+   ```
+
+3. Ouvrir l’URL affichée dans le terminal, généralement :
+   ```bash
+   http://localhost:3000
+   ```
+
+## Scripts disponibles
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+```
+
+## Structure du projet
+
+- `src/` : interface, éditeur, docs, transpileur et logique applicative
+- `docs/` : documentation pédagogique
+- `examples/` : exemples d’algorithmes et cas d’usage
+- `public/` : ressources statiques
+- `screenshot.png` : capture de l’application
+
+## Licence
+
+Projet éducatif interne / de démonstration.

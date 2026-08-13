@@ -504,32 +504,29 @@ export class Parser {
 
     const params: string[] = [];
     const paramTypes: Record<string, string> = {};
+    const paramDefaultValues: Record<string, ExpressionNode> = {};
 
-    if (!this.check(TokenType.RPAREN)) {
-      const p1 = this.consume(
-        TokenType.IDENTIFIER,
-        `Nom de paramètre attendu.`
-      );
-      params.push(p1.value);
+    const parseParam = (): void => {
+      const paramName = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu.`);
+      params.push(paramName.value);
+
       if (this.match(TokenType.COLON)) {
-        if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA)) {
+        if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA) && !this.check(TokenType.EGAL)) {
           const typeToken = this.advance();
-          paramTypes[p1.value] = typeToken.value;
+          paramTypes[paramName.value] = typeToken.value;
         }
       }
 
+      if (this.match(TokenType.EGAL)) {
+        paramDefaultValues[paramName.value] = this.parseExpression(0);
+      }
+    };
+
+    if (!this.check(TokenType.RPAREN)) {
+      parseParam();
+
       while (this.match(TokenType.COMMA)) {
-        const pNext = this.consume(
-          TokenType.IDENTIFIER,
-          `Nom de paramètre attendu après la virgule.`
-        );
-        params.push(pNext.value);
-        if (this.match(TokenType.COLON)) {
-          if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA)) {
-            const typeToken = this.advance();
-            paramTypes[pNext.value] = typeToken.value;
-          }
-        }
+        parseParam();
       }
     }
 
@@ -567,6 +564,7 @@ export class Parser {
       name: nameToken.value,
       params,
       paramTypes,
+      paramDefaultValues,
       returnType,
       body,
       line: fnToken.line,
@@ -588,26 +586,29 @@ export class Parser {
 
     const params: string[] = [];
     const paramTypes: Record<string, string> = {};
+    const paramDefaultValues: Record<string, ExpressionNode> = {};
 
-    if (!this.check(TokenType.RPAREN)) {
-      const p1 = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu.`);
-      params.push(p1.value);
+    const parseParam = (): void => {
+      const paramName = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu.`);
+      params.push(paramName.value);
+
       if (this.match(TokenType.COLON)) {
-        if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA)) {
+        if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA) && !this.check(TokenType.EGAL)) {
           const typeToken = this.advance();
-          paramTypes[p1.value] = typeToken.value;
+          paramTypes[paramName.value] = typeToken.value;
         }
       }
 
+      if (this.match(TokenType.EGAL)) {
+        paramDefaultValues[paramName.value] = this.parseExpression(0);
+      }
+    };
+
+    if (!this.check(TokenType.RPAREN)) {
+      parseParam();
+
       while (this.match(TokenType.COMMA)) {
-        const pNext = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu après la virgule.`);
-        params.push(pNext.value);
-        if (this.match(TokenType.COLON)) {
-          if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA)) {
-            const typeToken = this.advance();
-            paramTypes[pNext.value] = typeToken.value;
-          }
-        }
+        parseParam();
       }
     }
 
@@ -633,6 +634,7 @@ export class Parser {
       name: nameToken.value,
       params,
       paramTypes,
+      paramDefaultValues,
       body,
       line: procToken.line,
     };
@@ -678,20 +680,28 @@ export class Parser {
         this.consume(TokenType.LPAREN, `Parenthèse ouvrante '(' attendue après 'constructeur'.`);
         const params: string[] = [];
         const paramTypes: Record<string, string> = {};
-        if (!this.check(TokenType.RPAREN)) {
-          const p1 = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu pour le constructeur.`);
-          params.push(p1.value);
+        const paramDefaultValues: Record<string, ExpressionNode> = {};
+
+        const parseParam = (): void => {
+          const paramName = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu pour le constructeur.`);
+          params.push(paramName.value);
+
           if (this.match(TokenType.COLON)) {
-            const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${p1.value}'.`);
-            paramTypes[p1.value] = t.value;
-          }
-          while (this.match(TokenType.COMMA)) {
-            const pNext = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu après la virgule.`);
-            params.push(pNext.value);
-            if (this.match(TokenType.COLON)) {
-              const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${pNext.value}'.`);
-              paramTypes[pNext.value] = t.value;
+            if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA) && !this.check(TokenType.EGAL)) {
+              const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${paramName.value}'.`);
+              paramTypes[paramName.value] = t.value;
             }
+          }
+
+          if (this.match(TokenType.EGAL)) {
+            paramDefaultValues[paramName.value] = this.parseExpression(0);
+          }
+        };
+
+        if (!this.check(TokenType.RPAREN)) {
+          parseParam();
+          while (this.match(TokenType.COMMA)) {
+            parseParam();
           }
         }
         this.consume(TokenType.RPAREN, `Parenthèse fermante ')' attendue après la liste du constructeur.`);
@@ -707,7 +717,7 @@ export class Parser {
         this.consume(TokenType.FIN_CONSTRUCTEUR, `Mot-clé 'finconstructeur' attendu pour fermer le constructeur.`);
         this.consumeOptionalSemicolonOrNewline();
 
-        constructor = { type: 'ClassConstructor', params, paramTypes, body, line: classToken.line };
+        constructor = { type: 'ClassConstructor', params, paramTypes, paramDefaultValues, body, line: classToken.line };
         continue;
       }
 
@@ -717,20 +727,28 @@ export class Parser {
         this.consume(TokenType.LPAREN, `Parenthèse ouvrante '(' attendue après le nom de méthode.`);
         const params: string[] = [];
         const paramTypes: Record<string, string> = {};
-        if (!this.check(TokenType.RPAREN)) {
-          const p1 = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu.`);
-          params.push(p1.value);
+        const paramDefaultValues: Record<string, ExpressionNode> = {};
+
+        const parseParam = (): void => {
+          const paramName = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu.`);
+          params.push(paramName.value);
+
           if (this.match(TokenType.COLON)) {
-            const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${p1.value}'.`);
-            paramTypes[p1.value] = t.value;
-          }
-          while (this.match(TokenType.COMMA)) {
-            const pNext = this.consume(TokenType.IDENTIFIER, `Nom de paramètre attendu après la virgule.`);
-            params.push(pNext.value);
-            if (this.match(TokenType.COLON)) {
-              const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${pNext.value}'.`);
-              paramTypes[pNext.value] = t.value;
+            if (!this.check(TokenType.RPAREN) && !this.check(TokenType.COMMA) && !this.check(TokenType.EGAL)) {
+              const t = this.consume(TokenType.IDENTIFIER, `Type de paramètre attendu pour '${paramName.value}'.`);
+              paramTypes[paramName.value] = t.value;
             }
+          }
+
+          if (this.match(TokenType.EGAL)) {
+            paramDefaultValues[paramName.value] = this.parseExpression(0);
+          }
+        };
+
+        if (!this.check(TokenType.RPAREN)) {
+          parseParam();
+          while (this.match(TokenType.COMMA)) {
+            parseParam();
           }
         }
         this.consume(TokenType.RPAREN, `Parenthèse fermante ')' attendue après la liste des paramètres.`);
@@ -754,7 +772,7 @@ export class Parser {
         this.consume(TokenType.FIN_FONCTION, `Mot-clé 'finfonction' attendu pour fermer la méthode.`);
         this.consumeOptionalSemicolonOrNewline();
 
-        methods.push({ type: 'ClassMethod', name: nameToken.value, params, paramTypes, returnType, body, line: fnToken.line });
+        methods.push({ type: 'ClassMethod', name: nameToken.value, params, paramTypes, paramDefaultValues, returnType, body, line: fnToken.line });
         continue;
       }
 

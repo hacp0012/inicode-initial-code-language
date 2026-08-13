@@ -17,6 +17,7 @@ import {
   FolderOpen,
   Download,
   MoreVertical,
+  Info,
 } from "lucide-react";
 import { CodeFile, SidebarTab } from "../types";
 import { ALGORITHM_EXAMPLES, AlgorithmExample } from "../data/examples";
@@ -40,6 +41,7 @@ interface SidebarProps {
   onSelectExample: (ex: AlgorithmExample) => void;
   onOpenLexer: () => void;
   onOpenCheatSheet: () => void;
+  onOpenAppInfo: () => void;
   theme: ThemeMode;
   resolvedTheme: "light" | "dark";
   onCycleTheme: () => void;
@@ -61,6 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectExample,
   onOpenLexer,
   onOpenCheatSheet,
+  onOpenAppInfo,
   theme,
   resolvedTheme,
   onCycleTheme,
@@ -294,12 +297,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-        {/* Bottom Rail: Theme Switch */}
+        {/* Bottom Rail: Theme Switch + App info */}
         <div className="flex flex-col items-center gap-2">
+          <button
+            onClick={onOpenAppInfo}
+            title="Informations sur l'application"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:bg-slate-200/70 dark:hover:bg-zinc-800/60 transition cursor-pointer"
+          >
+            <Info className="w-4 h-4" />
+          </button>
+
           <button
             onClick={onCycleTheme}
             title={getThemeTooltip()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-700 dark:text-zinc-300 bg-slate-200/80 dark:bg-[#22222b] hover:bg-slate-300 dark:hover:bg-[#2a2a35] transition cursor-pointer border border-slate-300/80 dark:border-[#2d2d38] shadow-sm hover:shadow-none"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 dark:text-zinc-400 hover:bg-slate-200/70 dark:hover:bg-zinc-800/60 transition cursor-pointer"
           >
             <span className="flex items-center justify-center rounded-md bg-white/60 dark:bg-[#1b1b22] p-1.5 border border-slate-200 dark:border-[#343443]">
               {getThemeIcon()}

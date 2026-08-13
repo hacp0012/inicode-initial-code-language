@@ -50,6 +50,24 @@ affiche "Factorielle de 5 : " + factorielle(5)`;
     assert.doesNotMatch(generated, /__affiche__\(\("Factorielle de 5 : " \+ factorielle\(5\)\)\)/, 'L’expression ne doit pas contenir d’appel sans await');
 });
 
+test('supports optional parameters in function declarations', () => {
+    const code = `fonction deposer(montant: entier, veleur: entier = 123): entier
+    retourner montant + veleur
+finfonction
+
+affiche deposer(10)`;
+
+    const { tokens, errors } = new Lexer(code).tokenize();
+    assert.equal(errors.length, 0, 'Le lexer ne doit pas signaler d’erreur sur les paramètres optionnels');
+
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur doit accepter un paramètre optionnel avec valeur par défaut');
+
+    const generated = new CodeGenerator(ast).generate();
+    assert.match(generated, /async function deposer\(montant, veleur = 123\)/, 'Le générateur doit produire une valeur par défaut JS');
+    assert.match(generated, /return \(montant \+ veleur\);/, 'Le corps de fonction doit rester correct');
+});
+
 test('parses a minimal class declaration and generates JS class syntax', () => {
     const code = `classe Personne
     proprietes
