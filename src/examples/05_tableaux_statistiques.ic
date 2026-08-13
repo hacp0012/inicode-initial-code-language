@@ -1,0 +1,19 @@
+// --- Exemple 5 : Gestion des notes d'une classe ---
+soit notes = [14, 18, 9, 15, 12]
+soit somme = 0
+soit noteMax = notes[0]
+
+affiche "Liste des notes :", notes
+
+pour i de 0 à 4 faire
+    soit noteActuelle = notes[i]
+    somme = somme + noteActuelle
+    
+    si noteActuelle superieur_a noteMax alors
+        noteMax = noteActuelle
+    finsi
+finpour
+
+soit moyenne = somme / 5
+affiche "Moyenne de la classe :", moyenne
+affiche "Meilleure note :", noteMax

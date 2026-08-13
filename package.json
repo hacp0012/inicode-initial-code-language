@@ -1,0 +1,85 @@
+{
+  "name": "inicode",
+  "description": "IniCode - IDE d’apprentissage de l’algorithmique et de la programmation",
+  "author": "IniCode",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev:electron": "concurrently -k \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist release",
+    "lint": "tsc --noEmit",
+    "electron": "electron .",
+    "electron:build": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@google/genai": "^2.4.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/crypto-js": "^4.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "canvas-confetti": "^1.9.4",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "react-helmet-async": "^3.0.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.2",
+    "remark-gfm": "^4.0.1",
+    "vite": "^6.2.3",
+    "vite-plugin-pwa": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^10.0.4",
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "com.inicode.app",
+    "productName": "IniCode",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "artifactName": "IniCode-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "shortcutName": "IniCode"
+    }
+  }
+}

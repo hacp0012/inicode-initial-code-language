@@ -1,0 +1,20 @@
+// --- Exemple 4 : Jeu du Nombre Mystère ---
+constante SECRET = 42
+soit essais = 0
+soit trouve = faux
+
+affiche "Trouvez le nombre mystère entre 1 et 100 !"
+
+tantque non trouve faire
+    essais = essais + 1
+    lire proposition "Proposez un nombre :"
+    
+    si proposition egal_a SECRET alors
+        affiche "🎉 Félicitations ! Trouvé en", essais, "essais !"
+        trouve = vrai
+    sinonsi proposition superieur_a SECRET alors
+        affiche "C'est Moins !"
+    sinon
+        affiche "C'est Plus !"
+    finsi
+fintantque

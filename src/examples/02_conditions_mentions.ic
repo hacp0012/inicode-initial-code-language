@@ -1,0 +1,16 @@
+// --- Exemple 2 : Calcul de mention ---
+soit moyenne = 15.5
+
+affiche "Moyenne obtenue :", moyenne
+
+si moyenne superieur_ou_egal_a 16 alors
+    affiche "Félicitations ! Mention Très Bien 🌟"
+sinonsi moyenne superieur_ou_egal_a 14 alors
+    affiche "Bravo ! Mention Bien 👍"
+sinonsi moyenne superieur_ou_egal_a 12 alors
+    affiche "Assez Bien 👌"
+sinonsi moyenne superieur_ou_egal_a 10 alors
+    affiche "Admis sans mention 🙂"
+sinon
+    affiche "Ajourné. Bon courage pour les rattrapages !"
+finsi

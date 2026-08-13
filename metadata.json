@@ -1,0 +1,6 @@
+{
+  "name": "IniCode",
+  "description": "IniCode (Initier au Code) : IDE Algorithmique en Français & Transpileur interactif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

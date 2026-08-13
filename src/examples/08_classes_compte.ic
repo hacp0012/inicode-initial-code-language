@@ -1,0 +1,20 @@
+// --- Exemple 8 : Classes & Cas d'usage ---
+
+classe Compte
+    proprietes
+        solde: entier
+    finproprietes
+
+    constructeur(soldeInitial: entier)
+        soit this.solde = soldeInitial
+    finconstructeur
+
+    fonction deposer(montant: entier): entier
+        soit this.solde = this.solde + montant
+        retourner this.solde
+    finfonction
+finclasse
+
+soit monCompte = nouveau Compte(100)
+affiche "Solde initial :", monCompte.solde
+affiche "Nouveau solde :", monCompte.deposer(50)

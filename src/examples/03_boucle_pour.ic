@@ -1,0 +1,14 @@
+// --- Exemple 3 : Table de multiplication & Somme ---
+affiche "--- Table de 7 ---"
+pour i de 1 à 10 faire
+    soit produit = i * 7
+    affiche "7 x", i, "=", produit
+finpour
+
+affiche ""
+affiche "--- Somme des 10 premiers entiers ---"
+soit total = 0
+pour k de 1 à 10 faire
+    total = total + k
+finpour
+affiche "La somme de 1 à 10 vaut :", total

@@ -1,0 +1,13 @@
+// --- Exemple 7 : Sélecteur par cas ---
+soit note = 2
+
+selon note
+    cas 1
+        affiche "Très faible"
+    cas 2
+        affiche "Faible"
+    cas 3
+        affiche "Moyen"
+    defaut
+        affiche "Note non classée"
+finselon

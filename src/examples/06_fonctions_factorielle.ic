@@ -1,0 +1,27 @@
+// --- Exemple 6 : Fonctions & Procédures ---
+
+procedure afficherResultat(nom, valeur)
+    affiche "Résultat pour", nom, ":", valeur
+finprocedure
+
+fonction calculerSurfaceCercle(rayon)
+    constante PI = 3.14159
+    soit surface = PI * rayon * rayon
+    retourner surface
+finfonction
+
+fonction calculerFactorielle(n)
+    si n inferieur_ou_egal_a 1 alors
+        retourner 1
+    sinon
+        retourner n * calculerFactorielle(n - 1)
+    finsi
+finfonction
+
+soit r = 5
+soit s = calculerSurfaceCercle(r)
+affiche "Surface d'un cercle de rayon", r, ":", s
+
+soit num = 5
+soit fact = calculerFactorielle(num)
+afficherResultat("factorielle", fact)

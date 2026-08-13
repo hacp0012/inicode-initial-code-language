@@ -1,0 +1,12 @@
+// --- Exemple 1 : Déclaration et Affichage ---
+soit nom = "Alex"
+soit age = 18
+constante NOM_COMMUNAUTE = "AlgoFr"
+
+affiche "Bonjour", nom, "!"
+affiche "Vous avez", age, "ans."
+affiche "Bienvenue dans la communauté", NOM_COMMUNAUTE, "."
+
+// Demande d'information à l'utilisateur
+demander ville "Dans quelle ville habitez-vous ?"
+affiche "Enchanté ! La ville de", ville, "est magnifique."
