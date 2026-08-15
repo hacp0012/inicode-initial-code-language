@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
 import { DOC_CHAPTERS, DocChapter } from "./docsData";
 import { CodeHighlighter } from "../../components/CodeHighlighter";
@@ -67,6 +68,10 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
     navigate("/ide");
   };
 
+  const navigateToBack = () => {
+    history.back();
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#121218] text-slate-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
       {/* Top Header */}
@@ -78,6 +83,16 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
+
+          {isElectronWindow && (
+            <button
+              onClick={navigateToBack}
+              className="p-2.5 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-xl transition cursor-pointer"
+              title="Retour en arriere"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          )}
 
           <Link
             to={!isElectronWindow ? "/" : "#"}

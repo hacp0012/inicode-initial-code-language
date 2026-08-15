@@ -51,8 +51,9 @@ affiche("Le nombre maximum est : " + max)`;
   // Download windows | mac | linux release
   const downloadRelease = () => {
     // Remplacez par l'URL de votre fichier .exe
-    const url = "../hbuilds/packages-releases/IniCode.exe";
-    const filename = "IniCode.exe";
+    const filename = import.meta.env.VITE_WINDOWS_RELEASE || "IniCode.exe"; // Nom du fichier à télécharger
+    const url = "downloads/release/" + filename;
+
     // 1. Créer un élément de lien () invisible
     const link = document.createElement("a");
     // 2. Lui attribuer l'URL du fichier à télécharger
@@ -76,7 +77,7 @@ affiche("Le nombre maximum est : " + max)`;
             <div className="text-white rounded-xl shadow-lg shadow-orange-600/30">
               <img src="logo.png" alt="IniCode Logo" className="w-7 h-7" />
             </div>
-            <span>IniCode</span>
+            <span>IniCodes</span>
           </Link>
         </div>
 

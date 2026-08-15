@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = 'inicode_secure_storage_key_v1';
+const SECRET_KEY = import.meta.env.VITE_SECRET_STORAGE_KEY || "inicode_secure_storage_key_v1";
 
 /**
  * Utility for encrypted key-value storage wrapping localStorage and sessionStorage

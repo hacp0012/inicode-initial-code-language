@@ -9,6 +9,8 @@ const __dirname = path.dirname(__filename);
 
 const isDev = !app.isPackaged;
 
+const devURL = "http://localhost:3000";
+
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1440,
@@ -30,6 +32,33 @@ function createWindow() {
     },
   });
 
+  // Injecter les dependances dans la nouvelle fenetre popup.
+  // et bliquer les liens externe.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // 1. Définir les adresses autorisées (votre app React en dev et en prod)
+    const estAutorise = url.startsWith(devURL) || url.startsWith("file://");
+
+    // Si l'URL est interne, on autorise l'ouverture avec le preload
+    if (estAutorise) {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          autoHideMenuBar: true,
+          webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: false,
+          },
+        },
+      };
+    }
+
+    // 2. Si le site est externe (ex: google.com, pirate.com), on bloque complètement !
+    console.log(`Ouverture bloquée pour le site externe : ${url}`);
+    return { action: "deny" }; // 👈 Bloque l'ouverture de la fenêtre
+  });
+
   ipcMain.on("window:minimize", () => mainWindow.minimize());
   ipcMain.on("window:toggle-maximize", () => {
     if (mainWindow.isMaximized()) {
@@ -42,7 +71,7 @@ function createWindow() {
   ipcMain.on("window:close", () => mainWindow.close());
 
   if (isDev) {
-    mainWindow.loadURL("http://localhost:3000/#/ide");
+    mainWindow.loadURL(devURL + "/#/ide");
     mainWindow.webContents.openDevTools({ mode: "detach" });
   } else {
     mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "/ide" });
