@@ -34,6 +34,7 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<string | null>(null);
+  const appVersion = import.meta.env.VITE_APP_VERSION || "1.0.0";
 
   // Active chapter
   const currentChapter = DOC_CHAPTERS.find((ch) => ch.slug === slug) || DOC_CHAPTERS[0];
@@ -106,7 +107,7 @@ export const DocsPage: React.FC<DocsPageProps> = ({ theme, onToggleTheme, onOpen
             </div>
             <span>IniCode</span>
             <span className="text-xs px-2 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 font-medium rounded-full border border-orange-500/20">
-              Docs
+              Docs {appVersion}
             </span>
           </Link>
         </div>

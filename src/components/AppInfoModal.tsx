@@ -36,6 +36,7 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value, href }) => {
 };
 
 export const AppInfoModal: React.FC<AppInfoModalProps> = ({ isOpen, onClose }) => {
+  const appVersion = import.meta.env.VITE_APP_VERSION || "1.0.0";
   if (!isOpen) return null;
 
   return (
@@ -85,7 +86,7 @@ export const AppInfoModal: React.FC<AppInfoModalProps> = ({ isOpen, onClose }) =
             <InfoItem icon={<UserRound className="h-4 w-4" />} label="Auteur" value="hacp0012" />
             <InfoItem icon={<Building2 className="h-4 w-4" />} label="Organisation" value="IniCode / FREEDEV-ACADEMY" />
             <InfoItem icon={<FileText className="h-4 w-4" />} label="License" value="MIT" />
-            <InfoItem icon={<ShieldCheck className="h-4 w-4" />} label="Version" value="1.0.0" />
+            <InfoItem icon={<ShieldCheck className="h-4 w-4" />} label="Version" value={appVersion} />
             <InfoItem
               icon={<GitBranch className="h-4 w-4" />}
               label="Dépôt Git"

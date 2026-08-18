@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import fs from "node:fs";
+import multer from "multer";
 
 async function startServer() {
   const app = express();
@@ -20,10 +21,30 @@ async function startServer() {
   PACKAGES_DIR = isDev ? PACKAGES_DIR : path.join(HOME_DIR, PACKAGES_DIR);
   fs.mkdirSync(PACKAGES_DIR, { recursive: true });
 
+  // -----------------------------------------------------------------------------
+  // const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
+
+  // fs.mkdirSync(uploadDir, { recursive: true });
+
+  const storage = multer.diskStorage({
+    destination: (_req: any, _file: any, cb: (arg0: null, arg1: string) => void) => {
+      cb(null, PACKAGES_DIR);
+    },
+    filename: (_req: any, file: { originalname: any; }, cb: (arg0: null, arg1: string) => void) => {
+      const filename = `${Date.now()}-${file.originalname}`;
+      cb(null, filename);
+    }
+  });
+
+  const upload = multer({ storage });
+
+  app.use("/downloads", express.static(PACKAGES_DIR));
+  // -----------------------------------------------------------------------------
+
   // Rendre le dossier de stockage persistant accessible publiquement
   // Body parser
+  // app.use("/downloads", express.static(path.join(PACKAGES_DIR, VITE_WINDOWS_RELEASE)));
   app.use(express.json());
-  app.use("/downloads/release/windows", express.static(path.join(PACKAGES_DIR, VITE_WINDOWS_RELEASE)));
 
   if (isDev) {
     const vite = await createViteServer({

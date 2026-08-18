@@ -52,8 +52,7 @@ affiche("Le nombre maximum est : " + max)`;
   const downloadRelease = () => {
     // Remplacez par l'URL de votre fichier .exe
     const filename = import.meta.env.VITE_WINDOWS_RELEASE || "IniCode.exe"; // Nom du fichier à télécharger
-    // const url = "downloads/release/" + filename;
-    const url = "downloads/release/windows";
+    const url = "downloads/" + filename;
 
     // 1. Créer un élément de lien () invisible
     const link = document.createElement("a");
