@@ -8,6 +8,7 @@ async function startServer() {
   const PORT = process.env.PORT || '3000';
   const HOME_DIR = process.env.HOME_DIR || ""; //process.cwd();
   const PACKAGES_DIR_NAME = process.env.RELEASES_DIR || "packages-releases";
+  const VITE_WINDOWS_RELEASE = process.env.VITE_WINDOWS_RELEASE || "IniCode.exe";
 
   // Détecter si on est en mode développement ou production
   const isDev = process.env.NODE_ENV !== "production";
@@ -22,7 +23,7 @@ async function startServer() {
   // Rendre le dossier de stockage persistant accessible publiquement
   // Body parser
   app.use(express.json());
-  app.use("/downloads/release", express.static(PACKAGES_DIR));
+  app.use("/downloads/release/windows", express.static(path.join(PACKAGES_DIR, VITE_WINDOWS_RELEASE)));
 
   if (isDev) {
     const vite = await createViteServer({
