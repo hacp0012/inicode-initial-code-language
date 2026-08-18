@@ -12,6 +12,8 @@ async function startServer() {
   // Détecter si on est en mode développement ou production
   const isDev = process.env.NODE_ENV !== "production";
 
+  console.log(process.cwd())
+
   // default to current working dir.
   let PACKAGES_DIR = path.join(process.cwd(), PACKAGES_DIR_NAME);
   PACKAGES_DIR = isDev ? PACKAGES_DIR : path.join(HOME_DIR, PACKAGES_DIR);

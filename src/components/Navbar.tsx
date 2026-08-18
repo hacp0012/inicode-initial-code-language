@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className="w-full flex bg-white dark:bg-[#1e1e24] border-b border-slate-200 dark:border-[#2d2d38] text-slate-800 dark:text-zinc-200 "
+      className="w-full flex bg-white dark:bg-[#1e1e24] border-b border-slate-200 dark:border-[#2d2d38] text-slate-800 dark:text-zinc-200"
       style={{ WebkitAppRegion: showWindowControls ? "drag" : "none" }}
     >
       <div className="px-4 py-1 flex w-full items-center justify-between gap-3 shadow-xs select-none z-20">

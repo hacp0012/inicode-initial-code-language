@@ -25,7 +25,7 @@ interface CodeEditorProps {
   onTabContextMenu?: (action: "close" | "close_left" | "close_right" | "close_all", fileId: string) => void;
   onImportFile: (file: File) => void;
   onExportFile: (file: CodeFile) => void;
-  onCreateNewFile: () => void;
+  onCreateNewFile: (filename?: string) => void;
 }
 
 const SNIPPETS = [
@@ -314,7 +314,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           })}
 
           <button
-            onClick={onCreateNewFile}
+            onClick={() => onCreateNewFile()}
             title="Nouveau fichier"
             className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-200 dark:hover:bg-[#25252e] transition cursor-pointer"
           >
