@@ -24,7 +24,10 @@ export default function App() {
 
       <Routes>
         {/* Presentation Landing Page */}
-        <Route path="/" element={<HomePage theme={resolvedTheme} onToggleTheme={cycleTheme} />} />
+        <Route
+          path="/"
+          element={<HomePage theme={resolvedTheme} onToggleTheme={cycleTheme} onOpenCodeInIde={handleOpenCodeInIde} />}
+        />
 
         {/* Main Algorithmic IDE Workspace */}
         <Route

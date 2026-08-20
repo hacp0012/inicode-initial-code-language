@@ -24,9 +24,10 @@ import { CodeHighlighter } from "../components/CodeHighlighter";
 interface HomePageProps {
   theme: "light" | "dark";
   onToggleTheme: () => void;
+  onOpenCodeInIde?: (code: string) => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ theme, onToggleTheme }) => {
+export const HomePage: React.FC<HomePageProps> = ({ theme, onToggleTheme, onOpenCodeInIde }) => {
   const navigate = useNavigate();
   const [copiedCode, setCopiedCode] = useState(false);
 
@@ -51,7 +52,7 @@ affiche("Le nombre maximum est : " + max)`;
   // Download windows | mac | linux release
   const downloadRelease = () => {
     // Remplacez par l'URL de votre fichier .exe
-    const filename = import.meta.env.VITE_WINDOWS_RELEASE || "IniCode.exe"; // Nom du fichier à télécharger
+    /* const filename = import.meta.env.VITE_WINDOWS_RELEASE || "IniCode.exe"; // Nom du fichier à télécharger
     const url = "downloads/" + filename;
 
     // 1. Créer un élément de lien () invisible
@@ -65,7 +66,19 @@ affiche("Le nombre maximum est : " + max)`;
     // 5. Simuler un clic de la part de l'utilisateur
     link.click();
     // 6. Nettoyer et supprimer le lien du HTML
-    document.body.removeChild(link);
+    document.body.removeChild(link); */
+
+    if (import.meta.env.VITE_RELEASE_STORED_ON_GOOGLE_DRIVE) {
+      const docsUrl = new URL(import.meta.env.VITE_RELEASE_STORED_ON_GOOGLE_DRIVE).toString();
+      window.open(docsUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleTryInIde = (code: string) => {
+    if (onOpenCodeInIde) {
+      onOpenCodeInIde(code);
+    }
+    navigate("/ide");
   };
 
   return (
@@ -179,7 +192,14 @@ affiche("Le nombre maximum est : " + max)`;
               <CheckCircle2 className="w-4 h-4" />
               <span>Transpilation ES6 & TS Valide</span>
             </div>
-            <Link to="/ide" className="text-orange-400 hover:underline flex items-center gap-1 font-semibold">
+            <Link
+              to="/ide"
+              onClick={(e) => {
+                e.preventDefault();
+                handleTryInIde(heroSnippet);
+              }}
+              className="text-orange-400 hover:underline flex items-center gap-1 font-semibold"
+            >
               <span>Exécuter cet algorithme</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>

@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center gap-2">
               <h1 className="font-black tracking-tight text-xl text-orange-600 dark:text-orange-500">IniCode</h1>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500/10 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border border-orange-500/30">
-                Initier au Code {appVersion}
+                Initial Code {appVersion}
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 hidden sm:block">
