@@ -17,28 +17,28 @@ async function startServer() {
   console.log(process.cwd())
 
   // default to current working dir.
-  let PACKAGES_DIR = path.join(process.cwd(), PACKAGES_DIR_NAME);
-  PACKAGES_DIR = isDev ? PACKAGES_DIR : path.join(HOME_DIR, PACKAGES_DIR);
-  fs.mkdirSync(PACKAGES_DIR, { recursive: true });
+  // let PACKAGES_DIR = path.join(process.cwd(), PACKAGES_DIR_NAME);
+  // PACKAGES_DIR = isDev ? PACKAGES_DIR : path.join(HOME_DIR, PACKAGES_DIR);
+  // fs.mkdirSync(PACKAGES_DIR, { recursive: true });
 
   // -----------------------------------------------------------------------------
   // const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
 
   // fs.mkdirSync(uploadDir, { recursive: true });
 
-  const storage = multer.diskStorage({
-    destination: (_req: any, _file: any, cb: (arg0: null, arg1: string) => void) => {
-      cb(null, PACKAGES_DIR);
-    },
-    filename: (_req: any, file: { originalname: any; }, cb: (arg0: null, arg1: string) => void) => {
-      const filename = `${Date.now()}-${file.originalname}`;
-      cb(null, filename);
-    }
-  });
+  // const storage = multer.diskStorage({
+  //   destination: (_req: any, _file: any, cb: (arg0: null, arg1: string) => void) => {
+  //     cb(null, PACKAGES_DIR);
+  //   },
+  //   filename: (_req: any, file: { originalname: any; }, cb: (arg0: null, arg1: string) => void) => {
+  //     const filename = `${Date.now()}-${file.originalname}`;
+  //     cb(null, filename);
+  //   }
+  // });
 
-  const upload = multer({ storage });
+  // const upload = multer({ storage });
 
-  app.use("/downloads", express.static(PACKAGES_DIR));
+  // app.use("/downloads", express.static(PACKAGES_DIR));
   // -----------------------------------------------------------------------------
 
   // Rendre le dossier de stockage persistant accessible publiquement
