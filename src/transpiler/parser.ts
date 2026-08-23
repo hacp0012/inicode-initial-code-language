@@ -1,3 +1,4 @@
+import { Lexer } from './lexer';
 import {
   ASTNode,
   ArrayNode,
@@ -25,6 +26,7 @@ import {
   ReturnNode,
   SwitchNode,
   ExportNode,
+  TemplateStringNode,
   Token,
   TokenType,
   TranspilerError,
@@ -1028,12 +1030,7 @@ export class Parser {
 
     if (token.type === TokenType.STRING) {
       this.advance();
-      return {
-        type: 'Literal',
-        value: token.value,
-        rawType: 'string',
-        line: token.line,
-      };
+      return this.parseStringLiteral(token);
     }
 
     if (token.type === TokenType.VRAI) {
@@ -1296,6 +1293,69 @@ export class Parser {
       column,
       suggestion,
     });
+  }
+
+  private parseStringLiteral(token: Token): ExpressionNode {
+    const raw = token.value;
+    // Vérifier si la chaîne contient une interpolation ${...} ou $ident
+    const hasInterpolation = /\$\{([^}]+)\}|\$([a-zA-Zà-ÿÀ-Ÿ_][a-zA-Z0-9à-ÿÀ-Ÿ_]*)/.test(raw);
+
+    if (!hasInterpolation) {
+      return {
+        type: 'Literal',
+        value: raw,
+        rawType: 'string',
+        line: token.line,
+      };
+    }
+
+    const parts: (string | ExpressionNode)[] = [];
+    let lastIndex = 0;
+    const regex = /\$\{([^}]+)\}|\$([a-zA-Zà-ÿÀ-Ÿ_][a-zA-Z0-9à-ÿÀ-Ÿ_]*)/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(raw)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(raw.slice(lastIndex, match.index));
+      }
+
+      if (match[1] !== undefined) {
+        // Forme ${expression}
+        const exprText = match[1].trim();
+        try {
+          const { tokens } = new Lexer(exprText).tokenize();
+          const subParser = new Parser(tokens);
+          const parsedExpr = subParser.parseExpression(0);
+          parts.push(parsedExpr);
+        } catch {
+          parts.push({
+            type: 'Identifier',
+            name: exprText,
+            line: token.line,
+          });
+        }
+      } else if (match[2] !== undefined) {
+        // Forme $variable
+        const varName = match[2];
+        parts.push({
+          type: 'Identifier',
+          name: varName,
+          line: token.line,
+        });
+      }
+
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < raw.length) {
+      parts.push(raw.slice(lastIndex));
+    }
+
+    return {
+      type: 'TemplateString',
+      parts,
+      line: token.line,
+    };
   }
 
   private synchronize() {

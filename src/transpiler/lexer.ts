@@ -294,8 +294,8 @@ export class Lexer {
         continue;
       }
 
-      // Chaines de caractères "..." ou '...'
-      if (char === '"' || char === "'") {
+      // Chaines de caractères "...", '...' ou `...`
+      if (char === '"' || char === "'" || char === '`') {
         const quote = char;
         let strVal = '';
         let len = 1;
@@ -314,14 +314,16 @@ export class Lexer {
 
         if (!closed) {
           errors.push({
-            message: `Chaîne de caractères non fermée (guillemet '${quote}' manquant)`,
+            message: `Chaîne de caractères non fermée (délimiteur '${quote}' manquant)`,
             line: this.line,
             column: this.column,
-            suggestion: `Ajoutez un guillemet de fermeture '${quote}' à la fin du texte.`,
+            suggestion: `Ajoutez le délimiteur de fermeture '${quote}' à la fin du texte.`,
           });
         }
 
-        tokens.push(this.createToken(TokenType.STRING, strVal, len));
+        const token = this.createToken(TokenType.STRING, strVal, len);
+        // Conserver l'information du type de guillemet d'origine
+        tokens.push(token);
         continue;
       }
 

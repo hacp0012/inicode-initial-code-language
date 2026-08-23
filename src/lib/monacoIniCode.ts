@@ -33,6 +33,7 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       { open: '(', close: ')' },
       { open: '"', close: '"' },
       { open: "'", close: "'" },
+      { open: '`', close: '`' },
     ],
     surroundingPairs: [
       { open: '{', close: '}' },
@@ -40,6 +41,7 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       { open: '(', close: ')' },
       { open: '"', close: '"' },
       { open: "'", close: "'" },
+      { open: '`', close: '`' },
     ],
   });
 
@@ -96,6 +98,17 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       'lire',
       'demander',
       'saisir',
+      'eval',
+      'js',
+      'JS',
+      'Math',
+      'Maths',
+      'Texte',
+      'String',
+      'Tableau',
+      'Array',
+      'DateHeure',
+      'DateTime',
     ],
 
     typeKeywords: [
@@ -192,6 +205,7 @@ export function registerIniCodeLanguage(monaco: Monaco) {
         [/\d+/, 'number'],
 
         // Strings
+        [/`([^`\\]|\\.)*`/, 'string'],
         [/"([^"\\]|\\.)*"/, 'string'],
         [/'([^'\\]|\\.)*'/, 'string'],
       ],
@@ -213,8 +227,12 @@ export function registerIniCodeLanguage(monaco: Monaco) {
 
   // Define Auto-Complete / IntelliSense with Dynamic Symbol Scanning
   monaco.languages.registerCompletionItemProvider(INICODE_LANGUAGE_ID, {
-    provideCompletionItems: (model: { getWordUntilPosition: (arg0: any) => any; getValue: () => any; }, position: { lineNumber: any; }) => {
+    triggerCharacters: ['.', ' ', '('],
+    provideCompletionItems: (model: any, position: any) => {
       const word = model.getWordUntilPosition(position);
+      const lineContent = model.getLineContent(position.lineNumber);
+      const textUntilPosition = lineContent.substring(0, position.column - 1);
+
       const range = {
         startLineNumber: position.lineNumber,
         endLineNumber: position.lineNumber,
@@ -222,7 +240,133 @@ export function registerIniCodeLanguage(monaco: Monaco) {
         endColumn: word.endColumn,
       };
 
+      // 1. Détection d'accès membre : Objet.methode
+      const memberMatch = textUntilPosition.match(/\b([a-zA-Zà-ÿÀ-Ÿ_][a-zA-Z0-9à-ÿÀ-Ÿ_]*)\.\s*([a-zA-Z0-9à-ÿÀ-Ÿ_]*)$/);
+      if (memberMatch) {
+        const objectName = memberMatch[1].toLowerCase();
+        const memberSuggestions: any[] = [];
+
+        if (objectName === 'math' || objectName === 'maths') {
+          const mathMethods = [
+            { label: 'PI', insertText: 'PI', doc: 'Constante Pi (3.14159...)', kind: monaco.languages.CompletionItemKind.Constant },
+            { label: 'E', insertText: 'E', doc: 'Constante d’Euler (2.71828...)', kind: monaco.languages.CompletionItemKind.Constant },
+            { label: 'racine(x)', insertText: 'racine(${1:x})', doc: 'Calcule la racine carrée d’un nombre', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'arrondi(x, dec)', insertText: 'arrondi(${1:x}${2:, 2})', doc: 'Arrondit un nombre avec précision optionnelle', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'sol(x)', insertText: 'sol(${1:x})', doc: 'Arrondit vers le bas (plancher / floor)', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'plafond(x)', insertText: 'plafond(${1:x})', doc: 'Arrondit vers le haut (plafond / ceil)', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'abs(x)', insertText: 'abs(${1:x})', doc: 'Valeur absolue d’un nombre', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'max(...n)', insertText: 'max(${1:a}, ${2:b})', doc: 'Retourne le plus grand des nombres donnés', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'min(...n)', insertText: 'min(${1:a}, ${2:b})', doc: 'Retourne le plus petit des nombres donnés', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'puissance(base, exp)', insertText: 'puissance(${1:base}, ${2:exposant})', doc: 'Calcule base élevée à la puissance exposant', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'aleatoire(min, max)', insertText: 'aleatoire(${1:min}, ${2:max})', doc: 'Génère un entier aléatoire entre min et max inclus', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'sin(x)', insertText: 'sin(${1:x})', doc: 'Sinus d’un angle en radians', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'cos(x)', insertText: 'cos(${1:x})', doc: 'Cosinus d’un angle en radians', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'tan(x)', insertText: 'tan(${1:x})', doc: 'Tangente d’un angle en radians', kind: monaco.languages.CompletionItemKind.Method },
+            { label: 'log(x)', insertText: 'log(${1:x})', doc: 'Logarithme népérien', kind: monaco.languages.CompletionItemKind.Method },
+          ];
+          mathMethods.forEach((m) => {
+            memberSuggestions.push({
+              label: m.label,
+              kind: m.kind,
+              insertText: m.insertText,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              documentation: { value: `**Math.${m.label}**\n\n${m.doc}` },
+              range,
+            });
+          });
+          return { suggestions: memberSuggestions };
+        }
+
+        if (objectName === 'texte' || objectName === 'string') {
+          const texteMethods = [
+            { label: 'longueur(s)', insertText: 'longueur(${1:s})', doc: 'Retourne le nombre de caractères d’un texte' },
+            { label: 'majuscule(s)', insertText: 'majuscule(${1:s})', doc: 'Convertit tout le texte en majuscules' },
+            { label: 'minuscule(s)', insertText: 'minuscule(${1:s})', doc: 'Convertit tout le texte en minuscules' },
+            { label: 'contient(s, sousTexte)', insertText: 'contient(${1:s}, "${2:recherche}")', doc: 'Vérifie si le texte contient une sous-chaîne (vrai/faux)' },
+            { label: 'remplacer(s, cible, nouv)', insertText: 'remplacer(${1:s}, "${2:cible}", "${3:remplacement}")', doc: 'Remplace la première occurrence' },
+            { label: 'remplacerTout(s, cible, nouv)', insertText: 'remplacerTout(${1:s}, "${2:cible}", "${3:remplacement}")', doc: 'Remplace toutes les occurrences' },
+            { label: 'decouper(s, sep)', insertText: 'decouper(${1:s}, "${2: }")', doc: 'Découpe un texte en tableau selon un séparateur' },
+            { label: 'sousTexte(s, deb, fin)', insertText: 'sousTexte(${1:s}, ${2:0}, ${3:5})', doc: 'Extrait une portion de texte' },
+            { label: 'nettoyer(s)', insertText: 'nettoyer(${1:s})', doc: 'Supprime les espaces au début et à la fin' },
+            { label: 'commencePar(s, pref)', insertText: 'commencePar(${1:s}, "${2:prefixe}")', doc: 'Vérifie si le texte commence par un préfixe' },
+            { label: 'finitPar(s, suff)', insertText: 'finitPar(${1:s}, "${2:suffixe}")', doc: 'Vérifie si le texte finit par un suffixe' },
+            { label: 'inverser(s)', insertText: 'inverser(${1:s})', doc: 'Inverse les caractères du texte' },
+          ];
+          texteMethods.forEach((m) => {
+            memberSuggestions.push({
+              label: m.label,
+              kind: monaco.languages.CompletionItemKind.Method,
+              insertText: m.insertText,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              documentation: { value: `**Texte.${m.label}**\n\n${m.doc}` },
+              range,
+            });
+          });
+          return { suggestions: memberSuggestions };
+        }
+
+        if (objectName === 'tableau' || objectName === 'array') {
+          const tabMethods = [
+            { label: 'longueur(t)', insertText: 'longueur(${1:t})', doc: 'Retourne la taille du tableau' },
+            { label: 'ajouter(t, elem)', insertText: 'ajouter(${1:t}, ${2:element})', doc: 'Ajoute un élément à la fin du tableau' },
+            { label: 'retirer(t)', insertText: 'retirer(${1:t})', doc: 'Retire et retourne le dernier élément' },
+            { label: 'contient(t, elem)', insertText: 'contient(${1:t}, ${2:element})', doc: 'Vérifie si le tableau contient l’élément' },
+            { label: 'inverser(t)', insertText: 'inverser(${1:t})', doc: 'Inverse l’ordre des éléments' },
+            { label: 'trier(t)', insertText: 'trier(${1:t})', doc: 'Trie les éléments par ordre croissant' },
+            { label: 'joindre(t, sep)', insertText: 'joindre(${1:t}, "${2:, }")', doc: 'Fusionne tous les éléments en texte' },
+            { label: 'somme(t)', insertText: 'somme(${1:t})', doc: 'Calcule la somme de tous les nombres' },
+            { label: 'moyenne(t)', insertText: 'moyenne(${1:t})', doc: 'Calcule la moyenne arithmétique' },
+            { label: 'max(t)', insertText: 'max(${1:t})', doc: 'Retourne le plus grand élément' },
+            { label: 'min(t)', insertText: 'min(${1:t})', doc: 'Retourne le plus petit élément' },
+          ];
+          tabMethods.forEach((m) => {
+            memberSuggestions.push({
+              label: m.label,
+              kind: monaco.languages.CompletionItemKind.Method,
+              insertText: m.insertText,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              documentation: { value: `**Tableau.${m.label}**\n\n${m.doc}` },
+              range,
+            });
+          });
+          return { suggestions: memberSuggestions };
+        }
+
+        if (objectName === 'dateheure' || objectName === 'datetime') {
+          const dateMethods = [
+            { label: 'maintenant()', insertText: 'maintenant()', doc: 'Date et heure actuelles' },
+            { label: 'aujourdhui()', insertText: 'aujourdhui()', doc: 'Date du jour (YYYY-MM-DD)' },
+            { label: 'annee(d)', insertText: 'annee(${1:DateHeure.maintenant()})', doc: 'Année actuelle (ex: 2026)' },
+            { label: 'mois(d)', insertText: 'mois(${1:DateHeure.maintenant()})', doc: 'Mois actuel (1 à 12)' },
+            { label: 'jour(d)', insertText: 'jour(${1:DateHeure.maintenant()})', doc: 'Jour du mois (1 à 31)' },
+            { label: 'heure(d)', insertText: 'heure(${1:DateHeure.maintenant()})', doc: 'Heure actuelle (0 à 23)' },
+            { label: 'minute(d)', insertText: 'minute(${1:DateHeure.maintenant()})', doc: 'Minute actuelle (0 à 59)' },
+            { label: 'seconde(d)', insertText: 'seconde(${1:DateHeure.maintenant()})', doc: 'Seconde actuelle (0 à 59)' },
+            { label: 'timestamp(d)', insertText: 'timestamp()', doc: 'Horodatage en millisecondes (Epoch Unix)' },
+            { label: 'formater(d, fmt)', insertText: 'formater(${1:DateHeure.maintenant()}, "${2|complet,date,heure|}")', doc: 'Formate une date en chaîne de caractères' },
+          ];
+          dateMethods.forEach((m) => {
+            memberSuggestions.push({
+              label: m.label,
+              kind: monaco.languages.CompletionItemKind.Method,
+              insertText: m.insertText,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              documentation: { value: `**DateHeure.${m.label}**\n\n${m.doc}` },
+              range,
+            });
+          });
+          return { suggestions: memberSuggestions };
+        }
+      }
+
       const baseSuggestions: any[] = [
+        // Classes standard
+        { label: 'Math', kind: monaco.languages.CompletionItemKind.Class, insertText: 'Math.', documentation: { value: '**Classe Math** : Fonctions et constantes mathématiques (`Math.racine`, `Math.aleatoire`, `Math.PI`, etc.).' }, range },
+        { label: 'Texte', kind: monaco.languages.CompletionItemKind.Class, insertText: 'Texte.', documentation: { value: '**Classe Texte** : Traitement et manipulation de chaînes de caractères (`Texte.majuscule`, `Texte.decouper`, etc.).' }, range },
+        { label: 'Tableau', kind: monaco.languages.CompletionItemKind.Class, insertText: 'Tableau.', documentation: { value: '**Classe Tableau** : Utilitaires pour listes et tableaux (`Tableau.ajouter`, `Tableau.somme`, `Tableau.trier`, etc.).' }, range },
+        { label: 'DateHeure', kind: monaco.languages.CompletionItemKind.Class, insertText: 'DateHeure.', documentation: { value: '**Classe DateHeure** : Gestion des dates, heures et horodatages (`DateHeure.maintenant()`, etc.).' }, range },
+        { label: 'js', kind: monaco.languages.CompletionItemKind.Function, insertText: 'js("${1:// code JS natif}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, documentation: { value: '**Évaluation JS** : Exécute du code JavaScript natif et renvoie le résultat.' }, range },
+        { label: 'eval', kind: monaco.languages.CompletionItemKind.Function, insertText: 'eval("${1:// expression JS}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, documentation: { value: '**Évaluation JS** : Évalue dynamiquement du code JavaScript.' }, range },
         // Keywords
         {
           label: 'soit',
@@ -691,9 +835,10 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       equivalent: 'number',
     },
     texte: {
-      title: '🔤 Type `texte` (String)',
-      desc: 'Représente une chaîne de caractères entre guillemets. Transpilié en `string` en JS/TS.',
-      equivalent: 'string',
+      title: '🔤 Type & Classe `Texte` (String)',
+      desc: 'Type chaîne de caractères et classe utilitaire de manipulation de texte (`Texte.majuscule`, `Texte.contient`, etc.).',
+      equivalent: 'string / String',
+      example: 'soit s: texte = "bonjour"\nsoit maj = Texte.majuscule(s)',
     },
     booleen: {
       title: '☯️ Type `booleen` (Boolean)',
@@ -706,9 +851,10 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       equivalent: 'boolean',
     },
     tableau: {
-      title: '📦 Type `tableau` (Array)',
-      desc: 'Représente une liste d\'éléments indexés. Transpilié en `any[]` en JS/TS.',
+      title: '📦 Type & Classe `Tableau` (Array)',
+      desc: 'Type liste d\'éléments et classe utilitaire de manipulation de tableaux (`Tableau.ajouter`, `Tableau.trier`, `Tableau.somme`, etc.).',
       equivalent: 'Array<T> ou any[]',
+      example: 'soit t: tableau = [3, 1, 2]\nTableau.trier(t)',
     },
     egal_a: {
       title: '⚖️ Opérateur `egal_a`',
@@ -724,15 +870,15 @@ export function registerIniCodeLanguage(monaco: Monaco) {
     },
     different_de: {
       title: '⚖️ Opérateur `different_de`',
-      desc: 'Compare deux valeurs pour la différence. Équivalent à `!=`.',
+      desc: 'Vérifie si deux valeurs sont différentes. Équivalent à `!=`.',
       equivalent: '!==',
-      example: 'si x different_de 0 alors\n    affiche "différent"\nfinsi',
+      example: 'si x different_de 0 alors\n    affiche "non nul"\nfinsi',
     },
     superieur_a: {
       title: '⚖️ Opérateur `superieur_a`',
       desc: 'Vérifie si une valeur est strictement supérieure à une autre. Équivalent à `>`.',
       equivalent: '>',
-      example: 'si score superieur_a 100 alors\n    affiche "Bravo"\nfinsi',
+      example: 'si score superieur_a 10 alors\n    affiche "gagné"\nfinsi',
     },
     inferieur_a: {
       title: '⚖️ Opérateur `inferieur_a`',
@@ -762,11 +908,51 @@ export function registerIniCodeLanguage(monaco: Monaco) {
       desc: 'Littéral booléen équivalent à `false`.',
       equivalent: 'false',
     },
+    math: {
+      title: '📐 Classe `Math` (Mathématiques)',
+      desc: 'Fournit des constantes et fonctions mathématiques : `Math.PI`, `Math.racine(x)`, `Math.arrondi(x)`, `Math.aleatoire(min, max)`, etc.',
+      example: 'soit r = Math.racine(25)\nsoit de = Math.aleatoire(1, 6)',
+    },
+    maths: {
+      title: '📐 Classe `Maths` (Mathématiques)',
+      desc: 'Alias de la classe `Math`.',
+      example: 'soit pi = Maths.PI',
+    },
+    string: {
+      title: '📝 Classe `String` (Chaînes de caractères)',
+      desc: 'Alias de la classe `Texte`.',
+      example: 'soit s = String.toUpperCase("bonjour")',
+    },
+    array: {
+      title: '📊 Classe `Array` (Tableaux)',
+      desc: 'Alias de la classe `Tableau`.',
+      example: 'soit t = [1, 2]\nArray.push(t, 3)',
+    },
+    dateheure: {
+      title: '⏰ Classe `DateHeure` (Gestion du temps)',
+      desc: 'Gestion des dates et heures : `DateHeure.maintenant()`, `DateHeure.aujourdhui()`, `DateHeure.formater(d)`, etc.',
+      example: 'soit d = DateHeure.maintenant()\naffiche "Date du jour :", DateHeure.aujourdhui()',
+    },
+    datetime: {
+      title: '⏰ Classe `DateTime` (Gestion du temps)',
+      desc: 'Alias de la classe `DateHeure`.',
+      example: 'soit ts = DateTime.timestamp()',
+    },
+    eval: {
+      title: '⚡ Fonction `eval` (Évaluation JS)',
+      desc: 'Exécute dynamiquement du code JavaScript natif.',
+      example: 'soit res = eval("2 + 2")',
+    },
+    js: {
+      title: '⚡ Fonction `js` (JavaScript Natif)',
+      desc: 'Exécute du code JavaScript natif ou appelle des fonctions JS du navigateur / Node.',
+      example: 'soit r = js("Math.hypot(3, 4)")',
+    },
   };
 
   // Register Hover Provider (Tooltips on cursor hover for keywords, types, and variables)
   monaco.languages.registerHoverProvider(INICODE_LANGUAGE_ID, {
-    provideHover: (model: { getWordAtPosition: (arg0: { lineNumber: any; }) => any; getLineContent: (arg0: any) => any; getLinesContent: () => any; }, position: { lineNumber: any; }) => {
+    provideHover: (model: any, position: any) => {
       const word = model.getWordAtPosition(position);
       if (!word) return null;
 

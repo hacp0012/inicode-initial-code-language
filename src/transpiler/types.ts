@@ -282,7 +282,14 @@ export type ExpressionNode =
   | MemberAccessNode
   | NewNode
   | ArrayNode
-  | IndexAccessNode;
+  | IndexAccessNode
+  | TemplateStringNode;
+
+export interface TemplateStringNode {
+  type: 'TemplateString';
+  parts: (string | ExpressionNode)[];
+  line: number;
+}
 
 export interface LiteralNode {
   type: 'Literal';

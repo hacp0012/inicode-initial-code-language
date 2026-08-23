@@ -35,11 +35,16 @@ export default defineConfig(() => {
             },
           ],
         },
+        workbox: {
+          // Définir la limite à 8 Mo (8 * 1024 * 1024)
+          maximumFileSizeToCacheInBytes: 8388608, 
+        }
       }),
     ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        'monaco-editor/esm': path.resolve(__dirname, 'node_modules/monaco-editor/esm'),
       },
     },
     server: {

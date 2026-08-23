@@ -21,6 +21,7 @@ export class CodeGenerator {
   private indentLevel: number = 0;
   private isStepByStep: boolean = false;
   private targetLanguage: 'js' | 'ts' = 'js';
+  private declaredVariables: Set<string> = new Set<string>();
 
   constructor(
     ast: ProgramNode,
@@ -33,6 +34,7 @@ export class CodeGenerator {
   }
 
   public generate(): string {
+    this.declaredVariables.clear();
     const lines: string[] = [];
 
     if (this.isStepByStep) {
@@ -62,6 +64,7 @@ export class CodeGenerator {
 
     switch (node.type) {
       case 'VarDecl': {
+        this.declaredVariables.add(node.name);
         const keyword = node.kind === 'constante' ? 'const' : 'let';
         const val = this.generateExpression(node.value);
         const varTypeArg = node.varType ? JSON.stringify(node.varType) : 'null';
@@ -104,10 +107,18 @@ export class CodeGenerator {
           ? JSON.stringify(node.promptText)
           : `"${node.variableName}"`;
         const track = this.isStepByStep ? `\n${this.indent()}__var__(${JSON.stringify(node.variableName)}, ${node.variableName});` : '';
-        if (this.targetLanguage === 'ts') {
-          return `${stepInjection}${this.indent()}const ${node.variableName}: any = await __lire__(${prompt});${track}`;
+        
+        // Si la variable a déjà été déclarée (par ex: soit ville: texte), on génère une assignation
+        if (this.declaredVariables.has(node.variableName)) {
+          return `${stepInjection}${this.indent()}${node.variableName} = await __lire__(${prompt});${track}`;
         }
-        return `${stepInjection}${this.indent()}var ${node.variableName} = await __lire__(${prompt});${track}`;
+
+        // Sinon on déclare la variable
+        this.declaredVariables.add(node.variableName);
+        if (this.targetLanguage === 'ts') {
+          return `${stepInjection}${this.indent()}let ${node.variableName}: any = await __lire__(${prompt});${track}`;
+        }
+        return `${stepInjection}${this.indent()}let ${node.variableName} = await __lire__(${prompt});${track}`;
       }
 
       case 'If': {
@@ -365,6 +376,16 @@ export class CodeGenerator {
         const arr = this.generateExpression(expr.array);
         const idx = this.generateExpression(expr.index);
         return `${arr}[${idx}]`;
+      }
+
+      case 'TemplateString': {
+        const segments = expr.parts.map((part) => {
+          if (typeof part === 'string') {
+            return part.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+          }
+          return `\${${this.generateExpression(part)}}`;
+        });
+        return `\`${segments.join('')}\``;
       }
     }
   }

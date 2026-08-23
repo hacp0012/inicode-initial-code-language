@@ -102,3 +102,67 @@ affiche p.saluer()`;
     assert.match(generated, /this\.age = age/, 'L’assignation de propriété à this doit rester explicite');
     assert.match(generated, /new Personne\("Ada", 20\)/, 'L’instanciation doit être générée');
 });
+
+test('generates assignment when variable is declared before demander/lire', () => {
+    const code = `soit ville: texte
+demander ville "Dans quelle ville habitez-vous ?"
+affiche ville`;
+
+    const { tokens, errors } = new Lexer(code).tokenize();
+    assert.equal(errors.length, 0, 'Le lexer ne doit pas signaler d’erreur');
+
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur ne doit pas signaler d’erreur');
+
+    const generated = new CodeGenerator(ast).generate();
+    assert.match(generated, /let ville = null;/, 'La variable doit être déclarée initialement');
+    assert.match(generated, /ville = await __lire__\("Dans quelle ville habitez-vous \?"\);/, 'demander doit être une réassignation et non une redéclaration');
+    assert.doesNotMatch(generated, /var ville = await __lire__/, 'Ne doit pas utiliser var ville pour éviter le conflit Identifier has already been declared');
+});
+
+test('supports template strings, $var interpolation and string concatenation', () => {
+    const code = `soit nom = "IniCode"
+soit version = 2
+soit msg1 = \`Bienvenue sur \${nom} v\${version}\`
+soit msg2 = "Nom : $nom, version : $version"
+soit msg3 = "Hello " + nom + " !"
+affiche msg1, msg2, msg3`;
+
+    const { tokens, errors } = new Lexer(code).tokenize();
+    assert.equal(errors.length, 0, 'Le lexer doit accepter les backticks et interpolations sans erreur');
+
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur doit parser les template strings sans erreur');
+
+    const generated = new CodeGenerator(ast).generate();
+    assert.match(generated, /let msg1 = `Bienvenue sur \${nom} v\${version}`;/, 'Génère un template literal JS pour les backticks');
+    assert.match(generated, /let msg2 = `Nom : \${nom}, version : \${version}`;/, 'Génère un template literal JS pour l’interpolation $var');
+    assert.match(generated, /let msg3 = \(\("Hello " \+ nom\) \+ " !"\);/, 'Génère une concaténation JS classique avec +');
+});
+
+test('supports standard library Math, Texte, Tableau, DateHeure and eval/js calls', () => {
+    const code = `soit racine25 = Math.racine(25)
+soit maj = Texte.majuscule("bonjour")
+soit tab = [3, 1, 2]
+Tableau.trier(tab)
+soit d = DateHeure.aujourdhui()
+soit cal = eval("5 * 5")
+soit jsv = js("Math.hypot(3, 4)")
+affiche racine25, maj, tab, d, cal, jsv`;
+
+    const { tokens, errors } = new Lexer(code).tokenize();
+    assert.equal(errors.length, 0, 'Le lexer ne doit pas signaler d’erreur sur les classes stdlib');
+
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur doit parser les appels de membres stdlib sans erreur');
+
+    const generated = new CodeGenerator(ast).generate();
+    assert.match(generated, /Math\.racine\(25\)/, 'Génère l’appel à Math.racine');
+    assert.match(generated, /Texte\.majuscule\("bonjour"\)/, 'Génère l’appel à Texte.majuscule');
+    assert.match(generated, /Tableau\.trier\(tab\)/, 'Génère l’appel à Tableau.trier');
+    assert.match(generated, /DateHeure\.aujourdhui\(\)/, 'Génère l’appel à DateHeure.aujourdhui');
+    assert.match(generated, /eval\("5 \* 5"\)/, 'Génère l’appel à eval');
+    assert.match(generated, /js\("Math\.hypot\(3, 4\)"\)/, 'Génère l’appel à js');
+});
+
+

@@ -3,7 +3,7 @@
   "description": "IniCode - IDE d’apprentissage de l’algorithmique et de la programmation",
   "author": "hacp0012",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {

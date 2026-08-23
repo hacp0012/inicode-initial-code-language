@@ -134,4 +134,62 @@ export const CHEAT_SHEET_DATA: CheatSheetCategory[] = [
       },
     ],
   },
+  {
+    category: 'Chaînes, Interpolation & Concaténation',
+    items: [
+      {
+        syntax: '`Texte ${variable}`',
+        jsEquivalent: '`Texte ${variable}`',
+        description: 'Template string avec backticks et expression interpolée.',
+        example: 'soit msg = `Bienvenue ${nom} !`',
+      },
+      {
+        syntax: '"Texte $variable"',
+        jsEquivalent: '`Texte ${variable}`',
+        description: 'Interpolation directe avec le symbole dollar ($).',
+        example: 'affiche "Score : $score sur 20"',
+      },
+      {
+        syntax: '"Texte " + variable',
+        jsEquivalent: '"Texte " + variable',
+        description: 'Concaténation classique de texte avec l’opérateur +.',
+        example: 'soit full = "Bonjour " + nom + " !"',
+      },
+    ],
+  },
+  {
+    category: 'Bibliothèque Standard & JavaScript (StdLib)',
+    items: [
+      {
+        syntax: 'Math.racine(x) / Math.aleatoire(min, max)',
+        jsEquivalent: 'Math.sqrt(x) / ...',
+        description: 'Constantes et fonctions mathématiques (`Math.PI`, `Math.arrondi`, `Math.max`, etc.).',
+        example: 'soit de = Math.aleatoire(1, 6)\nsoit r = Math.racine(25)',
+      },
+      {
+        syntax: 'Texte.majuscule(s) / Texte.contient(s, sub)',
+        jsEquivalent: 's.toUpperCase() / s.includes(sub)',
+        description: 'Traitement de chaînes (`Texte.longueur`, `Texte.decouper`, `Texte.nettoyer`, etc.).',
+        example: 'soit maj = Texte.majuscule("bonjour")',
+      },
+      {
+        syntax: 'Tableau.ajouter(t, elem) / Tableau.trier(t)',
+        jsEquivalent: 't.push(elem) / t.sort()',
+        description: 'Gestion de listes (`Tableau.somme`, `Tableau.joindre`, `Tableau.inverser`, etc.).',
+        example: 'soit tab = [3, 1, 2]\nTableau.trier(tab)',
+      },
+      {
+        syntax: 'DateHeure.maintenant() / DateHeure.aujourdhui()',
+        jsEquivalent: 'new Date() / ...',
+        description: 'Gestion des dates et heures (`DateHeure.timestamp`, `DateHeure.formater`, etc.).',
+        example: 'soit d = DateHeure.maintenant()',
+      },
+      {
+        syntax: 'js("code JS") / eval("expression")',
+        jsEquivalent: 'eval(code)',
+        description: 'Exécute du code JavaScript natif ou appelle des APIs JS.',
+        example: 'soit hyp = js("Math.hypot(3, 4)")',
+      },
+    ],
+  },
 ];

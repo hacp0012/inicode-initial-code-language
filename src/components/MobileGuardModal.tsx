@@ -22,13 +22,13 @@ export const MobileGuardModal: React.FC<MobileGuardModalProps> = ({ isOpen, onDi
           <div className="p-3 bg-orange-500/10 dark:bg-orange-500/20 rounded-xl text-orange-600 dark:text-orange-400">
             <Monitor className="w-6 h-6" />
           </div>
-          <button
+          {/* <button
             onClick={onDismiss}
             className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 rounded-lg transition"
             title="Fermer et continuer"
           >
             <X className="w-5 h-5" />
-          </button>
+          </button> */}
         </div>
 
         <h3 className="text-xl font-bold font-sans tracking-tight mb-2">Expérience Optimisée sur Grand Écran</h3>

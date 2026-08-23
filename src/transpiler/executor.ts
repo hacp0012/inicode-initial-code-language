@@ -1,4 +1,5 @@
 import { TranspilerError } from './types';
+import { INI_STD_LIB } from './stdlib';
 
 export interface ConsoleLog {
   id: string;
@@ -151,11 +152,14 @@ export class CodeExecutor {
     };
 
     try {
-      // Construction de la fonction dynamique sécurisée
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const runner = new AsyncFunction('__affiche__', '__lire__', '__step__', '__var__', jsCode);
+      // Construction de la fonction dynamique sécurisée avec injection de la stdlib IniCode
+      const stdLibKeys = Object.keys(INI_STD_LIB);
+      const stdLibValues = Object.values(INI_STD_LIB);
 
-      await runner(__affiche__, __lire__, __step__, __var__);
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const runner = new AsyncFunction('__affiche__', '__lire__', '__step__', '__var__', ...stdLibKeys, jsCode);
+
+      await runner(__affiche__, __lire__, __step__, __var__, ...stdLibValues);
 
       if (this.onLineHighlightCallback) this.onLineHighlightCallback(null);
       this.addLog('system', '✓ Exécution terminée avec succès.');

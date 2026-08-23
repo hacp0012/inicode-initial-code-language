@@ -228,7 +228,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         }
       }
     }
-  }, [errors, code]);
+  }, [errors]);
 
   const insertSnippet = (snippetCode: string) => {
     if (editorRef.current && monacoRef.current) {
@@ -443,13 +443,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             folding: true,
             padding: { top: 12, bottom: 12 },
             suggestOnTriggerCharacters: true,
+            acceptSuggestionOnCommitCharacter: false,
+            acceptSuggestionOnEnter: "smart",
+            tabCompletion: "on",
+            suggest: {
+              preview: false,
+              showStatusBar: true,
+              filterGraceful: true,
+              localityBonus: true,
+              shareSuggestSelections: false,
+            },
             quickSuggestions: {
               other: true,
               comments: false,
-              strings: true,
+              strings: false,
             },
             hover: {
-              delay: 150,
+              delay: 300,
             },
             fixedOverflowWidgets: true,
             renderValidationDecorations: "on" as const,
