@@ -153,13 +153,17 @@ export class CodeExecutor {
 
     try {
       // Construction de la fonction dynamique sécurisée avec injection de la stdlib IniCode
-      const stdLibKeys = Object.keys(INI_STD_LIB);
-      const stdLibValues = Object.values(INI_STD_LIB);
-
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const runner = new AsyncFunction('__affiche__', '__lire__', '__step__', '__var__', ...stdLibKeys, jsCode);
+      const runner = new AsyncFunction(
+        '__affiche__',
+        '__lire__',
+        '__step__',
+        '__var__',
+        '__stdlib__',
+        `with (__stdlib__) {\n${jsCode}\n}`
+      );
 
-      await runner(__affiche__, __lire__, __step__, __var__, ...stdLibValues);
+      await runner(__affiche__, __lire__, __step__, __var__, INI_STD_LIB);
 
       if (this.onLineHighlightCallback) this.onLineHighlightCallback(null);
       this.addLog('system', '✓ Exécution terminée avec succès.');

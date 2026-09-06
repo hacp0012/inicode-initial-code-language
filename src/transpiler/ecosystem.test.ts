@@ -6,6 +6,7 @@ import { Parser } from './parser';
 import { TokenType } from './types';
 import { INI_STD_LIB } from './stdlib';
 import { CodeGenerator } from './generator';
+import { CodeExecutor } from './executor';
 
 test('supports importer/exporter syntax and stdlib base functions', () => {
     const code = `importer "maths.ic"
@@ -118,6 +119,56 @@ affiche ville`;
     assert.match(generated, /let ville = null;/, 'La variable doit être déclarée initialement');
     assert.match(generated, /ville = await __lire__\("Dans quelle ville habitez-vous \?"\);/, 'demander doit être une réassignation et non une redéclaration');
     assert.doesNotMatch(generated, /var ville = await __lire__/, 'Ne doit pas utiliser var ville pour éviter le conflit Identifier has already been declared');
+});
+
+test('keeps assignments inside conditions as assignments', () => {
+    const code = `soit nombres: tableau = [12, 45, 89, 23, 67]
+soit max: entier = nombres[0]
+
+pour i de 1 à 4 pas 1 faire
+    si nombres[i] superieur_a max alors
+        max = nombres[i]
+    finsi
+finpour
+
+affiche("Le nombre maximum est : " + max)`;
+
+    const { tokens, errors } = new Lexer(code).tokenize();
+    assert.equal(errors.length, 0, 'Le lexer ne doit pas signaler d’erreur');
+
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur ne doit pas signaler d’erreur');
+
+    const generated = new CodeGenerator(ast).generate();
+    assert.match(generated, /let max = nombres\[0\];/, 'max doit être déclarée une seule fois');
+    assert.match(generated, /max = nombres\[i\];/, 'La mise à jour de max doit rester une affectation');
+    assert.doesNotMatch(generated, /let max = nombres\[i\];/, 'Une affectation dans le si ne doit pas redéclarer max');
+});
+
+test('executes user variables that shadow standard-library names', async () => {
+    const code = `soit nombres: tableau = [12, 45, 89, 23, 67]
+soit max: entier = nombres[0]
+pour i de 1 à 4 pas 1 faire
+    si nombres[i] superieur_a max alors
+        max = nombres[i]
+    finsi
+finpour
+affiche("Le nombre maximum est : " + max)`;
+
+    const { tokens } = new Lexer(code).tokenize();
+    const { ast, errors: parseErrors } = new Parser(tokens).parse();
+    assert.equal(parseErrors.length, 0, 'Le parseur ne doit pas signaler d’erreur');
+
+    const logs: string[] = [];
+    const executor = new CodeExecutor({
+        onLog: (nextLogs) => {
+            logs.push(...nextLogs.filter((log) => log.type === 'output').map((log) => log.text));
+        },
+    });
+
+    const success = await executor.run(new CodeGenerator(ast).generate());
+    assert.equal(success, true, 'Le code doit s’exécuter sans collision de nom');
+    assert.ok(logs.some((text) => text === 'Le nombre maximum est : 89'), 'Le maximum calculé doit être affiché');
 });
 
 test('supports template strings, $var interpolation and string concatenation', () => {

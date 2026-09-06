@@ -47,7 +47,8 @@ export const AppInfoModal: React.FC<AppInfoModalProps> = ({ isOpen, onClose }) =
           {/* Description */}
           <div className="rounded-xl border border-slate-100 dark:border-[#2a2a34] bg-slate-50/80 dark:bg-[#16161b] p-3.5 leading-relaxed text-slate-600 dark:text-zinc-300">
             <p>
-              IniCode est un environnement pédagogique conçu pour apprendre la programmation et l’algorithmique en français, avec exécution en temps réel, débogueur pas-à-pas et transpilateur vers JavaScript et TypeScript.
+              IniCode est un environnement pédagogique conçu pour apprendre la programmation et l’algorithmique en français,
+              avec exécution en temps réel, débogueur pas-à-pas et transpilateur vers JavaScript et TypeScript.
             </p>
           </div>
 
@@ -66,7 +67,7 @@ export const AppInfoModal: React.FC<AppInfoModalProps> = ({ isOpen, onClose }) =
                 <Building2 className="h-3.5 w-3.5 text-orange-500" />
                 <span className="font-medium">Organisation</span>
               </div>
-              <span className="font-semibold text-slate-800 dark:text-zinc-200">FREEDEV-ACADEMY</span>
+              <span className="font-semibold text-slate-800 dark:text-zinc-200">--- ---</span>
             </div>
 
             <div className="flex items-center justify-between rounded-lg px-3 py-2 bg-slate-50 dark:bg-[#202028] border border-slate-100 dark:border-[#2c2c36]">
@@ -123,4 +124,3 @@ export const AppInfoModal: React.FC<AppInfoModalProps> = ({ isOpen, onClose }) =
     </div>
   );
 };
-
