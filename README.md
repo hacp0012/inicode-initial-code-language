@@ -1,14 +1,18 @@
+<p align="center">
+    <img src="./public/logo.png" width="200" alt="DSI Logo">
+</p>
+
 # IniCode
 
 IDE d’apprentissage de l’algorithmique et de la programmation, pensée pour apprendre en français avec une syntaxe proche du pseudo-code.
 
 ## Version en ligne
 
-https://inicode.freedev-academy.com
+https://hacp0012.github.io/inicode-initial-code-language/
 
 **directement vers l'IDE**
 
-https://inicode.freedev-academy.com/#/ide
+https://hacp0012.github.io/inicode-initial-code-language/#/ide
 
 ## Aperçu
 
