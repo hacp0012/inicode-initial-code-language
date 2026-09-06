@@ -8,7 +8,7 @@ export default defineConfig(() => {
   return {
     // base: './',
     // It is important to set the base path to the subdirectory where the app will be hosted. In this case, it is '/inicode-initial-code-language/'.
-    // change this to the appropriate subdirectory if you are hosting the app in a different location.
+    // change this to the appropriate subdirectory if you are hosting the app in a different location. <repo>
     base: '/inicode-initial-code-language/',
     plugins: [
       react(),
