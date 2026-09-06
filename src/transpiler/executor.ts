@@ -153,7 +153,7 @@ export class CodeExecutor {
 
     try {
       // Construction de la fonction dynamique sécurisée avec injection de la stdlib IniCode
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const runner = new AsyncFunction(
         '__affiche__',
         '__lire__',
